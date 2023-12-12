@@ -29,3 +29,9 @@ down_graphite:
 		docker stack rm cadvisor; \
 	fi
 .PHONY: down_graphite
+
+run_worker_local:
+	cd ./src/worker && LOCAL=local elixir main.ex
+
+run_manager_local:
+	cd ./src/manager && LOCAL=local elixir main.ex
