@@ -12,7 +12,7 @@ defmodule Manager do
       :world
 
   """
-  def hello do
-    :world
+  def main do
+    IO.puts "Hello, world!"
   end
 end

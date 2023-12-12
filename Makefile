@@ -31,7 +31,7 @@ down_graphite:
 .PHONY: down_graphite
 
 run_worker_local:
-	cd ./src/worker && LOCAL=local elixir main.ex
+	cd ./src/worker && LOCAL=local mix run -e "Worker.main()"
 
 run_manager_local:
-	cd ./src/manager && LOCAL=local elixir main.ex
+	cd ./src/manager && LOCAL=local mix run -e "Manager.main()"
