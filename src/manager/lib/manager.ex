@@ -12,7 +12,10 @@ defmodule Manager do
       :world
 
   """
+
+
   def main do
     IO.puts "Hello, world!"
+    Interval.print_interval()
   end
 end
