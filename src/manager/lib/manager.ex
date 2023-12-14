@@ -16,6 +16,8 @@ defmodule Manager do
 
   def main do
     IO.puts "Hello, world!"
-    Interval.print_interval()
+    interval = Interval.newInterval(0, 10, 1)
+    IO.inspect(interval)
+    IO.puts Interval.round_float(1.23456789, 2)
   end
 end
