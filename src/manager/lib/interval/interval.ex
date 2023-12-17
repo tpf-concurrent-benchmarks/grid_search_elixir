@@ -7,14 +7,6 @@ defmodule Interval do
               size: 0,
               precision: 10
 
-    # def min(a, b) do #TODO: add this to an utils module
-    #     if a <= b do
-    #         a
-    #     else
-    #         b
-    #     end
-    # end
-
     def newInterval(start, end_interval, step) do
         size = round(:math.ceil((end_interval - start) / step))
         %Interval{start: start, end: end_interval, step: step, size: size}
@@ -25,14 +17,20 @@ defmodule Interval do
         %Interval{start: start, end: end_interval, step: step, size: size, precision: precision}
     end
 
-    def round_float(value, precision) do #TODO: add this to an utils module or make private
-        value |> Decimal.from_float() |> Decimal.round(precision) |> Decimal.to_float()
+    def _round(value, precision) do #TODO: add this to an utils module or make private
+        rounded_result =
+        case value do
+          x when is_integer(x) -> x
+          x when is_float(x) -> Float.round(x, precision)
+          _ -> value
+        end
+        rounded_result
     end
 
     def split_evenly(interval, n_partitions) do #TODO: make private when testing is done
         for j <- 0..(n_partitions - 1) do
-          sub_start = round_float(interval.start + j * interval.size / n_partitions * interval.step, interval.precision)
-          sub_end = round_float(interval.start + (j + 1) * interval.size / n_partitions * interval.step, interval.precision)
+          sub_start = _round(interval.start + j * interval.size / n_partitions * interval.step, interval.precision)
+          sub_end = _round(interval.start + (j + 1) * interval.size / n_partitions * interval.step, interval.precision)
 
           intervals = newInterval(sub_start, sub_end, interval.step)
 
@@ -41,30 +39,20 @@ defmodule Interval do
     end
 
     def sub_split(interval, maxElemsPerInterval, nSubIntervalsFull) do
-        sub_split(interval, maxElemsPerInterval, nSubIntervalsFull, [], nil)
+        sub_split(interval, maxElemsPerInterval, 0, nSubIntervalsFull, [])
     end
 
-    defp sub_split(_, _, 0, intervals, lastSubEnd) do
-        {Enum.reverse(intervals), lastSubEnd}
-    end
-
-    # def sub_split(interval, maxElemsPerInterval, nSubIntervalsFull) do
-    #     for j <- 0..(nSubIntervalsFull - 1) do
-    #         subStart = round_float(interval.start + j * maxElemsPerInterval * interval.step, interval.precision)
-    #         subEnd = round_float(min(interval.end,subStart + maxElemsPerInterval * interval.step), interval.precision)
-    #         intervals = newInterval(subStart, subEnd, interval.step)
-    #         intervals
-    #     end
-    # end
-
-    defp sub_split(interval, maxElemsPerInterval, nSubIntervalsFull, intervals, _) do
+    defp sub_split(interval, maxElemsPerInterval, currentSubIntervalsFull, nSubIntervalsFull, intervals) do
         j = nSubIntervalsFull - 1
-        subStart = round_float(interval.start + j * maxElemsPerInterval * interval.step, interval.precision)
-        subEnd = round_float(min(interval.end, subStart + maxElemsPerInterval * interval.step), interval.precision)
+        subStart = _round(interval.start + j * maxElemsPerInterval * interval.step, interval.precision)
+        subEnd = _round(min(interval.end, subStart + maxElemsPerInterval * interval.step), interval.precision)
 
         new_intervals = [newInterval(subStart, subEnd, interval.step) | intervals]
-
-        sub_split(interval, maxElemsPerInterval, nSubIntervalsFull - 1, new_intervals, subEnd)
+        if currentSubIntervalsFull < nSubIntervalsFull - 1 do
+            sub_split(interval, maxElemsPerInterval, currentSubIntervalsFull + 1, nSubIntervalsFull, new_intervals)
+        else
+            {new_intervals, subEnd}
+        end
     end
 
     def split_unevenly(interval, n_partitions) do
@@ -72,9 +60,11 @@ defmodule Interval do
 
         nSubIntervalsFull = round(:math.floor((interval.size - n_partitions) / (maxElemsPerInterval - 1)))
 
-        intervals = sub_split(interval, maxElemsPerInterval, nSubIntervalsFull)
+        {intervals, subEnd} = sub_split(interval, maxElemsPerInterval, nSubIntervalsFull)
 
-        # intervalReminder = newInterval()
+        intervalReminder = newInterval(subEnd, interval.end, interval.step)
+        subIntervalsReminder = split(intervalReminder, n_partitions - nSubIntervalsFull)
+        intervals ++ subIntervalsReminder
     end
 
     def split(interval, n_partitions) do
