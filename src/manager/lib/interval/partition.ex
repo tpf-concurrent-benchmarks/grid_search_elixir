@@ -13,4 +13,8 @@ defmodule Partition do
   def newPartition(intervals, nIntervals, maxChunkSize) do
     %Partition{nIntervals: nIntervals, intervals: intervals}
   end
+
+  def available(partition) do
+    partition.currentPartition < partition.nPartitions
+  end
 end
