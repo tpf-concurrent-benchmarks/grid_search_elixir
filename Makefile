@@ -31,10 +31,10 @@ down_graphite:
 .PHONY: down_graphite
 
 run_worker_local:
-	cd ./src/worker && LOCAL=local mix run -e "Worker.main()"
+	cd ./src/worker && LOCAL=local mix run
 
 run_manager_local:
-	cd ./src/manager && LOCAL=local mix run -e "Manager.main()"
+	cd ./src/manager && LOCAL=local mix run
 
 install_deps_worker_local:
 	cd ./src/worker && LOCAL=local mix deps.get
