@@ -1,18 +1,14 @@
 defmodule Worker do
-  @moduledoc """
-  Documentation for `Worker`.
-  """
+  @moduledoc false
 
-  @doc """
-  Hello world.
+  use Application
 
-  ## Examples
+  def start(_type, _args) do
+    children = [
+      {Task.Supervisor, name: Protocol.TaskSupervisor}
+    ]
 
-      iex> Worker.hello()
-      :world
-
-  """
-  def main do
-    IO.puts "Hello, world!"
+    opts = [strategy: :one_for_one, name: Protocol.Supervisor]
+    Supervisor.start_link(children, opts)
   end
 end

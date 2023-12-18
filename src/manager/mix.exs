@@ -14,6 +14,7 @@ defmodule Manager.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {Manager, []},
       extra_applications: [:logger]
     ]
   end
@@ -23,7 +24,8 @@ defmodule Manager.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-      {:decimal, "~> 2.1.1"}
+      {:decimal, "~> 2.1.1"},
+      {:common, path: "../common"}
     ]
   end
 end
