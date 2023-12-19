@@ -41,3 +41,8 @@ install_deps_worker_local:
 
 install_deps_manager_local:
 	cd ./src/manager && LOCAL=local mix deps.get
+
+format:
+	cd ./src/worker && mix format
+	cd ./src/manager && mix format
+	cd ./src/common && mix format
