@@ -2,7 +2,7 @@ defmodule Protocol do
   @moduledoc false
 
   def receive_message(message) do
-    IO.puts message
+    IO.puts(message)
   end
 
   def send_message(recipient, message) do

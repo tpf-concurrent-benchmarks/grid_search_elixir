@@ -1,0 +1,7 @@
+{
+    "host": "worker@localhost",
+    "metrics": {
+      "host": "localhost",
+      "port": 8125
+    }
+}
