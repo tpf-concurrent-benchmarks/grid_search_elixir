@@ -11,6 +11,11 @@ defmodule Manager do
     IO.inspect(Interval.split(interval, 2))
     IO.inspect(Interval.split(interval, 3))
 
+    partition = Partition.newPartition(Interval.split(interval, 3), 3, 2)
+    IO.puts(Partition.fullCalculationSize(partition))
+    IO.inspect(Partition.calculatePartitionPerInterval(partition))
+    IO.puts("Hello, world!")
+
     config = ConfigProvider.get_config("../manager/resources/config.json")
     IO.inspect(config)
 
