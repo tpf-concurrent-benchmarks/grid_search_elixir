@@ -10,11 +10,34 @@ defmodule Partition do
             splitIntervals: nil,
             currentIndex: nil
 
-  def newPartition(intervals, nIntervals, maxChunkSize) do
+  def newPartition(intervals, nIntervals, _maxChunkSize) do
     %Partition{nIntervals: nIntervals, intervals: intervals}
   end
 
   def available(partition) do
     partition.currentPartition < partition.nPartitions
   end
+
+  def calculatePartitionPerInterval(partition) do
+    for interval <- partition.intervals do
+      1
+    end
+  end
+
+  def split(partition, maxChunkSize) do
+    minBatches = :math.floor(fullCalculationSize(partition) / maxChunkSize) + 1
+  end
+
+  def fullCalculationSize(partition) do
+    fullCalculationSize(partition.intervals, 1)
+  end
+
+  def fullCalculationSize([], fullSize) do
+    fullSize
+  end
+
+  def fullCalculationSize([head | tail], fullSize) do
+    fullCalculationSize(tail, fullSize * head.size)
+  end
+
 end
