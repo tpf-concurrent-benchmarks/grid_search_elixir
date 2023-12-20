@@ -15,10 +15,10 @@ defmodule Manager do
     IO.inspect(config)
 
     children = [
-      {Task.Supervisor, name: Protocol.TaskSupervisor}
+      {Task.Supervisor, name: BaseProtocol.TaskSupervisor}
     ]
 
-    opts = [strategy: :one_for_one, name: Protocol.Supervisor]
+    opts = [strategy: :one_for_one, name: BaseProtocol.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

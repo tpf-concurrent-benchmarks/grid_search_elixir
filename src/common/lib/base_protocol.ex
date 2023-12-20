@@ -1,4 +1,4 @@
-defmodule Protocol do
+defmodule BaseProtocol do
   @moduledoc false
 
   def receive_message(message) do
@@ -17,6 +17,6 @@ defmodule Protocol do
   end
 
   defp remote_supervisor(recipient) do
-    {Protocol.TaskSupervisor, recipient}
+    {BaseProtocol.TaskSupervisor, recipient}
   end
 end
