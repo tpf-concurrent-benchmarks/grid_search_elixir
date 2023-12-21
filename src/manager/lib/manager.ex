@@ -13,8 +13,11 @@ defmodule Manager do
 
     partition = Partition.newPartition(Interval.split(interval, 3), 3, 2)
     IO.puts(Partition.fullCalculationSize(partition))
-    IO.inspect(Partition.calculatePartitionPerInterval(partition))
+    IO.inspect(Partition.calculatePartitionPerInterval(partition, 3))
     IO.puts("Hello, world!")
+    partition2 = Partition.newPartition([interval], 1, 2)
+    IO.inspect(Partition.calculatePartitionPerInterval(partition2, 10))
+
 
     config = ConfigProvider.get_config("../manager/resources/config.json")
     IO.inspect(config)

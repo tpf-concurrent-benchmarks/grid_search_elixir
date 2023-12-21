@@ -18,9 +18,26 @@ defmodule Partition do
     partition.currentPartition < partition.nPartitions
   end
 
-  def calculatePartitionPerInterval(partition) do
+  def calcPartitionAmount(partitionsPerInterval) do
+    partitionsPerInterval |> Enum.reduce(1, fn x, acc -> acc * x end)
+  end
+
+  def calculateAmountOfMissingPartitions(minBatches, partitionsPerInterval) do
+    :math.ceil(minBatches / calcPartitionAmount(partitionsPerInterval))
+  end
+
+  def calculatePartitionPerInterval(partition, minBatches) do
+    partitionsPerInterval = Enum.map(partition.intervals, fn _interval -> 1 end)
+
     for interval <- partition.intervals do
-      1
+      missingPartitions = calculateAmountOfMissingPartitions(minBatches, partitionsPerInterval)
+      elements = interval.size
+
+      if elements > missingPartitions do
+        missingPartitions
+      else
+        elements
+      end
     end
   end
 
@@ -29,15 +46,6 @@ defmodule Partition do
   end
 
   def fullCalculationSize(partition) do
-    fullCalculationSize(partition.intervals, 1)
+    partition.intervals |> Enum.reduce(1, fn x, acc -> acc * x.size end)
   end
-
-  def fullCalculationSize([], fullSize) do
-    fullSize
-  end
-
-  def fullCalculationSize([head | tail], fullSize) do
-    fullCalculationSize(tail, fullSize * head.size)
-  end
-
 end
