@@ -17,6 +17,9 @@ defmodule Manager do
     IO.puts("Hello, world!")
     partition2 = Partition.newPartition([interval], 1, 2)
     IO.inspect(Partition.calculatePartitionPerInterval(partition2, 10))
+    Partition.split(partition2, 2)
+    IO.inspect(partition2.splitIntervals)
+    IO.puts("end review")
 
 
     config = ConfigProvider.get_config("../manager/resources/config.json")
