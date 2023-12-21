@@ -18,27 +18,32 @@ defmodule Partition do
     partition.currentPartition < partition.nPartitions
   end
 
-  def calcPartitionAmount(partitionsPerInterval) do
-    partitionsPerInterval |> Enum.reduce(1, fn x, acc -> acc * x end)
-  end
-
-  def calculateAmountOfMissingPartitions(minBatches, partitionsPerInterval) do
-    :math.ceil(minBatches / calcPartitionAmount(partitionsPerInterval))
+  def calculateAmountOfMissingPartitions(minBatches, fullPartitionSize) do
+    :math.ceil(minBatches / fullPartitionSize)
   end
 
   def calculatePartitionPerInterval(partition, minBatches) do
-    partitionsPerInterval = Enum.map(partition.intervals, fn _interval -> 1 end)
+    fullPartitionSize = 1
 
-    for interval <- partition.intervals do
-      missingPartitions = calculateAmountOfMissingPartitions(minBatches, partitionsPerInterval)
-      elements = interval.size
+    calculate_partitions_per_interval(partition.intervals, minBatches, fullPartitionSize, [])
+  end
 
+  defp calculate_partitions_per_interval([], _minBatches, _fullPartitionSize, partitionsPerInterval), do: Enum.reverse(partitionsPerInterval)
+
+  defp calculate_partitions_per_interval([interval | rest], minBatches, fullPartitionSize, partitionsPerInterval) do
+    IO.puts("fullPartitionSize: #{fullPartitionSize}")
+
+    missingPartitions = calculateAmountOfMissingPartitions(minBatches, fullPartitionSize)
+    elements = interval.size
+
+    {newFullPartitionSize, currPartitionSize} =
       if elements > missingPartitions do
-        missingPartitions
+        {fullPartitionSize * missingPartitions, missingPartitions}
       else
-        elements
+        {fullPartitionSize * elements, elements}
       end
-    end
+
+    calculate_partitions_per_interval(rest, minBatches, newFullPartitionSize, [currPartitionSize | partitionsPerInterval])
   end
 
   def split(partition, maxChunkSize) do
