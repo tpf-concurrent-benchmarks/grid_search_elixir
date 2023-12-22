@@ -31,7 +31,7 @@ defmodule Interval do
 
   # TODO: make private when testing is done
   def split_evenly(interval, n_partitions) do
-    for j <- 0..(n_partitions - 1) do
+    for j <- 0..(round(n_partitions) - 1) do
       sub_start =
         _round(
           interval.start + j * interval.size / n_partitions * interval.step,
@@ -105,7 +105,7 @@ defmodule Interval do
       n_partitions <= 0 ->
         nil
 
-      rem(interval.size, n_partitions) == 0 ->
+      rem(round(interval.size), round(n_partitions)) == 0 ->
         split_evenly(interval, n_partitions)
 
       true ->

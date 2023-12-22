@@ -10,8 +10,9 @@ defmodule Partition do
             splitIntervals: nil,
             currentIndex: nil
 
-  def newPartition(intervals, nIntervals, _maxChunkSize) do
-    %Partition{nIntervals: nIntervals, intervals: intervals}
+  def newPartition(intervals, nIntervals, maxChunkSize) do
+    partition = %Partition{nIntervals: nIntervals, intervals: intervals}
+    split(partition, maxChunkSize)
   end
 
   def available(partition) do
@@ -66,7 +67,7 @@ defmodule Partition do
       |> Map.put(:splitIntervals, splitIntervals)
       |> Map.put(:iterations, iterations)
       |> Map.put(:currentIndex, currentIndex)
-    end
+  end
 
   def fullCalculationSize(partition) do
     partition.intervals |> Enum.reduce(1, fn x, acc -> acc * x.size end)
