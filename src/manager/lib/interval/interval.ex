@@ -61,7 +61,7 @@ defmodule Interval do
          nSubIntervalsFull,
          intervals
        ) do
-    j = nSubIntervalsFull - 1
+    j = currentSubIntervalsFull
 
     subStart =
       _round(interval.start + j * maxElemsPerInterval * interval.step, interval.precision)
@@ -71,6 +71,9 @@ defmodule Interval do
         min(interval.end, subStart + maxElemsPerInterval * interval.step),
         interval.precision
       )
+
+    IO.puts("subStart: #{inspect(subStart)}")
+    IO.puts("subEnd: #{inspect(subEnd)}")
 
     new_intervals = [newInterval(subStart, subEnd, interval.step) | intervals]
 
@@ -83,18 +86,21 @@ defmodule Interval do
         new_intervals
       )
     else
-      {new_intervals, subEnd}
+      {Enum.reverse(new_intervals), subEnd}
     end
   end
 
   def split_unevenly(interval, n_partitions) do
     maxElemsPerInterval = round(:math.ceil(interval.size / n_partitions))
+    # IO.puts("maxElemsPerInterval: #{maxElemsPerInterval}") ok
 
     nSubIntervalsFull =
       round(:math.floor((interval.size - n_partitions) / (maxElemsPerInterval - 1)))
+    # IO.puts("nSubIntervalsFull: #{nSubIntervalsFull}") ok
 
     {intervals, subEnd} = sub_split(interval, maxElemsPerInterval, nSubIntervalsFull)
-
+    # IO.puts("intervals: #{inspect(intervals)}") not ok
+    # IO.puts("subEnd: #{inspect(subEnd)}") ok
     intervalReminder = newInterval(subEnd, interval.end, interval.step)
     subIntervalsReminder = split(intervalReminder, n_partitions - nSubIntervalsFull)
     intervals ++ subIntervalsReminder

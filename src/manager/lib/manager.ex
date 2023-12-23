@@ -8,15 +8,15 @@ defmodule Manager do
     IO.puts("Hello, world!")
     interval = Interval.newInterval(0, 10, 1)
     IO.inspect(interval)
-    IO.inspect(Interval.split(interval, 2))
+    # IO.inspect(Interval.split(interval, 2))
     IO.inspect(Interval.split(interval, 3))
-    interval2 = Interval.newInterval(0, 10, 1)
-    interval3 = Interval.newInterval(0, 10, 1)
+    # interval2 = Interval.newInterval(0, 10, 1)
+    # interval3 = Interval.newInterval(0, 10, 1)
 
-    partition = Partition.newPartition([interval, interval2, interval3], 1, 2)
-    IO.inspect(Partition.calculatePartitionPerInterval(partition, 3))
-    IO.inspect(partition)
-    IO.puts("end review")
+    # partition = Partition.newPartition([interval, interval2, interval3], 1, 2)
+    # IO.inspect(Partition.calculatePartitionPerInterval(partition, 3))
+    # IO.inspect(partition)
+    # IO.puts("end review")
 
 
     config = ConfigProvider.get_config("../manager/resources/config.json")
