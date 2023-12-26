@@ -31,10 +31,10 @@ down_graphite:
 .PHONY: down_graphite
 
 run_worker_local:
-	cd ./src/worker && LOCAL=local mix run
+	cd ./src/worker && LOCAL=local elixir --sname worker@localhost -S mix run
 
 run_manager_local:
-	cd ./src/manager && LOCAL=local mix run
+	cd ./src/manager && LOCAL=local elixir --sname manager@localhost -S mix run
 
 install_deps_worker_local:
 	cd ./src/worker && LOCAL=local mix deps.get
