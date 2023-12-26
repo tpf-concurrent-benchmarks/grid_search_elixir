@@ -72,4 +72,22 @@ defmodule Partition do
   def fullCalculationSize(partition) do
     partition.intervals |> Enum.reduce(1, fn x, acc -> acc * x.size end)
   end
+
+  def partitionGenerator([head], senderFun, prev) do
+    for elem <- head do
+      senderFun.([elem | prev])
+    end
+  end
+
+  def partitionGenerator([head | tail], senderFun, prev) do
+    for elem <- head do
+      partitionGenerator(tail, senderFun, [elem | prev])
+    end
+  end
+
+  def partitionGenerator([head | tail], fun) do
+    for elem <- head do
+      partitionGenerator(tail, senderFun, [elem])
+    end
+  end
 end
