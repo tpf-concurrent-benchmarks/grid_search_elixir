@@ -13,7 +13,13 @@ defmodule Worker do
 
     params = GridSearch.Params.new([0.0, 0.0], [1.0, 1.0], [0.1, 0.1])
 
-    grid_search = %GridSearch{params: params, accum_type: "MAX", result: 0.0, total_inputs: 0, input: %{}}
+    grid_search = %GridSearch{
+      params: params,
+      accum_type: "MAX",
+      result: 0.0,
+      total_inputs: 0,
+      input: %{}
+    }
 
     callback_function = fn
       parameters -> parameters[0] * parameters[0] + parameters[1] * parameters[1]
@@ -24,6 +30,5 @@ defmodule Worker do
 
     IO.puts("Final Result: #{result.result}")
     IO.puts("Final Input: #{inspect(result.input)}")
-
   end
 end

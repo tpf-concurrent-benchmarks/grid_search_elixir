@@ -96,6 +96,7 @@ defmodule Interval do
 
     nSubIntervalsFull =
       round(:math.floor((interval.size - n_partitions) / (maxElemsPerInterval - 1)))
+
     # IO.puts("nSubIntervalsFull: #{nSubIntervalsFull}") ok
 
     {intervals, subEnd} = sub_split(interval, maxElemsPerInterval, nSubIntervalsFull)

@@ -18,7 +18,6 @@ defmodule Manager do
     # IO.inspect(partition)
     # IO.puts("end review")
 
-
     config = ConfigProvider.get_config("../manager/resources/config.json")
     IO.inspect(config)
 

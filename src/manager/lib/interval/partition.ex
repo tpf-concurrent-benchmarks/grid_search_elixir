@@ -33,10 +33,15 @@ defmodule Partition do
     calculatePartitionsPerInterval(partition.intervals, minBatches, fullPartitionSize, [])
   end
 
-  defp calculatePartitionsPerInterval([], _minBatches, _fullPartitionSize, partitionsPerInterval), do: Enum.reverse(partitionsPerInterval)
+  defp calculatePartitionsPerInterval([], _minBatches, _fullPartitionSize, partitionsPerInterval),
+    do: Enum.reverse(partitionsPerInterval)
 
-  defp calculatePartitionsPerInterval([interval | rest], minBatches, fullPartitionSize, partitionsPerInterval) do
-
+  defp calculatePartitionsPerInterval(
+         [interval | rest],
+         minBatches,
+         fullPartitionSize,
+         partitionsPerInterval
+       ) do
     missingPartitions = calculateAmountOfMissingPartitions(minBatches, fullPartitionSize)
     elements = interval.size
 
@@ -47,7 +52,9 @@ defmodule Partition do
         {fullPartitionSize * elements, elements}
       end
 
-      calculatePartitionsPerInterval(rest, minBatches, newFullPartitionSize, [currPartitionSize | partitionsPerInterval])
+    calculatePartitionsPerInterval(rest, minBatches, newFullPartitionSize, [
+      currPartitionSize | partitionsPerInterval
+    ])
   end
 
   def split(partition, maxChunkSize) do
@@ -56,17 +63,19 @@ defmodule Partition do
     partitionsPerInterval = calculatePartitionPerInterval(partition, minBatches)
     nPartitions = calcPartitionsAmount(partitionsPerInterval)
 
-    splitIntervals = Enum.zip(partition.intervals, partitionsPerInterval)
+    splitIntervals =
+      Enum.zip(partition.intervals, partitionsPerInterval)
       |> Enum.map(fn {inteval, partitionSize} -> Interval.split(inteval, partitionSize) end)
 
     iterations = calcPartitionsAmount(partitionsPerInterval)
     currentIndex = List.duplicate(0, partition.nIntervals)
+
     partition
-      |> Map.put(:partitionsPerInterval, partitionsPerInterval)
-      |> Map.put(:nPartitions, nPartitions)
-      |> Map.put(:splitIntervals, splitIntervals)
-      |> Map.put(:iterations, iterations)
-      |> Map.put(:currentIndex, currentIndex)
+    |> Map.put(:partitionsPerInterval, partitionsPerInterval)
+    |> Map.put(:nPartitions, nPartitions)
+    |> Map.put(:splitIntervals, splitIntervals)
+    |> Map.put(:iterations, iterations)
+    |> Map.put(:currentIndex, currentIndex)
   end
 
   def fullCalculationSize(partition) do

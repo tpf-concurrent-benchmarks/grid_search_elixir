@@ -8,9 +8,17 @@ defmodule GridSearch do
 
     def new(accum_type) do
       case accum_type do
-        "MAX" -> %Accumulator{true_result: :math.pow(2.0, -1022), callback: &max/2}
-        "MIN" -> %Accumulator{true_result: :math.pow(2.0, 1023) * (2.0 - :math.pow(2.0, -52)), callback: &min/2}
-        _ -> %Accumulator{}
+        "MAX" ->
+          %Accumulator{true_result: :math.pow(2.0, -1022), callback: &max/2}
+
+        "MIN" ->
+          %Accumulator{
+            true_result: :math.pow(2.0, 1023) * (2.0 - :math.pow(2.0, -52)),
+            callback: &min/2
+          }
+
+        _ ->
+          %Accumulator{}
       end
     end
 
@@ -54,7 +62,10 @@ defmodule GridSearch do
     def new(start, finish, step) do
       total_iterations =
         Enum.reduce(start, 1, fn s, acc ->
-          cum_param = Float.floor((Enum.at(finish, trunc(s)) - Enum.at(start, trunc(s))) / Enum.at(step, trunc(s)))
+          cum_param =
+            Float.floor(
+              (Enum.at(finish, trunc(s)) - Enum.at(start, trunc(s))) / Enum.at(step, trunc(s))
+            )
 
           IO.puts("cum param: #{cum_param}")
 
@@ -62,7 +73,14 @@ defmodule GridSearch do
 
           acc * cum_param
         end)
-      %Params{start: start, finish: finish, step: step, current: start, total_iterations: total_iterations}
+
+      %Params{
+        start: start,
+        finish: finish,
+        step: step,
+        current: start,
+        total_iterations: total_iterations
+      }
     end
 
     def get_current(%Params{current: current} = params) do
@@ -78,6 +96,7 @@ defmodule GridSearch do
             {:halt, %{params_acc | current: start}}
           end
         end)
+
       %{params | current: new_current}
     end
 
@@ -88,16 +107,21 @@ defmodule GridSearch do
 
   def search(grid_search, callback) do
     accumulator = Accumulator.new(grid_search.accum_type)
+
     {accum, _} =
-      Enum.reduce(0..trunc(Params.get_total_iterations(grid_search.params)) - 1, {:ok, accumulator}, fn _, {:ok, acc} ->
-        current = Params.get_current(grid_search.params)
-        IO.puts(inspect(current))
-        IO.puts(inspect(grid_search.params))
-        res = callback.(current)
-        new_acc = Accumulator.accumulate(acc, res, current)
-        new_params = Params.next(grid_search.params)
-        {new_acc, new_params}
-      end)
+      Enum.reduce(
+        0..(trunc(Params.get_total_iterations(grid_search.params)) - 1),
+        {:ok, accumulator},
+        fn _, {:ok, acc} ->
+          current = Params.get_current(grid_search.params)
+          IO.puts(inspect(current))
+          IO.puts(inspect(grid_search.params))
+          res = callback.(current)
+          new_acc = Accumulator.accumulate(acc, res, current)
+          new_params = Params.next(grid_search.params)
+          {new_acc, new_params}
+        end
+      )
 
     true_result = Accumulator.get_result(accum)
     true_input = Accumulator.get_input(accum)
@@ -117,5 +141,4 @@ defmodule GridSearch do
   def fetch(%GridSearch.Params{} = params, key) do
     Params.fetch(params, key)
   end
-
 end
