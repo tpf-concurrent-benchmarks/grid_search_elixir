@@ -102,6 +102,6 @@ defmodule Partition do
 
   #this bounded version may be faster than the recursive one
   def partitionGenerator3elems(x, y, z, senderFun) do
-    for elemX <- x, elemY <- y, elemZ <- z do: senderFun.(elemX, elemY, elemZ)
+    for elemX <- x, elemY <- y, elemZ <- z, do: senderFun.(elemX, elemY, elemZ)
   end
 end
