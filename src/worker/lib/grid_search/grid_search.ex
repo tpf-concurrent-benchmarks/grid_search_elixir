@@ -24,19 +24,8 @@ defmodule GridSearch do
     end
 
     def accumulate(accumulator, res, current) do
-      IO.puts("Accumulator: #{inspect(accumulator)}")
-      IO.puts("Res: #{res}")
-      IO.puts("Current in accumulator: #{inspect(current)}")
       callback_fun = accumulator.callback
       callback_fun.(res, current, accumulator)
-    end
-
-    def get_result(%{true_result: result} = accumulator) do
-      result
-    end
-
-    def get_input(%{true_input: input} = accumulator) do
-      input
     end
 
     def max(res, current, %{true_result: true_result} = accumulator) do
@@ -70,8 +59,6 @@ defmodule GridSearch do
             Float.floor(
               (Enum.at(finish, trunc(s)) - Enum.at(start, trunc(s))) / Enum.at(step, trunc(s))
             )
-
-          IO.puts("cum param: #{cum_param}")
 
           cum_param = if cum_param == 0, do: 1, else: cum_param
 
@@ -108,13 +95,7 @@ defmodule GridSearch do
         end)
 
       new_current = Enum.reverse(new_current)
-
-      IO.puts("New current: #{inspect(new_current)}")
       %Params{params | current: new_current}
-    end
-
-    def get_total_iterations(%Params{total_iterations: total_iterations} = params) do
-      total_iterations
     end
   end
 
@@ -123,46 +104,23 @@ defmodule GridSearch do
 
     {:ok, accum, params} =
       Enum.reduce(
-        0..(trunc(Params.get_total_iterations(grid_search.params)) - 1),
+        0..(trunc(grid_search.params.total_iterations - 1)),
         {:ok, accumulator, grid_search.params},
         fn _, {:ok, acc, params} ->
           current = Params.get_current(params)
-          IO.puts("Current: #{inspect(current)}")
-          IO.puts("Grid search params: #{inspect(params)}")
           res = callback.(current)
           new_acc = Accumulator.accumulate(acc, res, current)
           new_params = Params.next(params)
-          IO.puts("New params: #{inspect(new_params)}")
           {:ok, new_acc, new_params}
         end
       )
 
-    true_result = Accumulator.get_result(accum)
-    true_input = Accumulator.get_input(accum)
-
-    IO.puts("accumulator final: #{inspect(accum)}")
-    IO.puts("Params final: #{inspect(params)}")
-    IO.puts("result: #{true_result}")
-    IO.puts("input: #{inspect(true_input)}")
-
     %GridSearch{
       params: params,
       accum_type: grid_search.accum_type,
-      result: true_result,
-      total_inputs: Params.get_total_iterations(params),
-      input: true_input
+      result: accum.true_result,
+      total_inputs: params.total_iterations,
+      input: accum.true_input
     }
-  end
-
-  def fetch(data, key) do
-    Map.get(data, key)
-  end
-
-  def fetch(%GridSearch{params: params} = data, key) do
-    Params.fetch(params, key)
-  end
-
-  def fetch(%GridSearch.Params{} = params, key) do
-    Params.fetch(params, key)
   end
 end
