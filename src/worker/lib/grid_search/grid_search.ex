@@ -1,5 +1,6 @@
 defmodule GridSearch do
-  defstruct params: %{}, accum_type: "", result: 0.0, total_inputs: 0, input: %{}
+  @moduledoc false
+  defstruct params: %{}, accum_type: "", result: 0.0, total_inputs: 0, input: []
 
   defmodule Accumulator do
     @moduledoc false
@@ -27,7 +28,6 @@ defmodule GridSearch do
       IO.puts("Res: #{res}")
       IO.puts("Current in accumulator: #{inspect(current)}")
       callback_fun = accumulator.callback
-      #IO.puts("Callback fun resultado: #{inspect(callback_fun.(res, current))}")
       callback_fun.(res, current, accumulator)
     end
 
@@ -92,21 +92,25 @@ defmodule GridSearch do
     end
 
     def next(%Params{start: start, finish: finish, step: step, current: current} = params) do
-      list_size = length(current)
-      {new_current, _} = Enum.with_index(current)
-      |> Enum.reverse()
-      |> Enum.reduce_while({current, false}, fn {current_val, index}, {acc, changed} ->
-        step_val = Enum.at(step, list_size - 1 - index)
-        finish_val = Enum.at(finish, list_size - 1 - index)
-        start_val = Enum.at(start, list_size - 1 - index)
-        if current_val + step_val < finish_val and not changed do
-          {:cont, {List.replace_at(acc, list_size - 1 - index, current_val + step_val), true}}
-        else
-          {:cont, {List.replace_at(acc, list_size - 1 - index, start_val), changed}}
-        end
-      end)
+      {new_current, _} =
+        Enum.zip([current, step, finish, start])
+        |> Enum.reverse()
+        |> Enum.reduce({[], false}, fn {current_val, step_val, finish_val, start_val}, {acc, incremented} ->
+          if incremented do
+            {[current_val | acc], incremented}
+          else
+            if current_val + step_val < finish_val do
+              {[current_val + step_val | acc], true}
+            else
+              {[start_val | acc], incremented}
+            end
+          end
+        end)
 
-      %{params | current: new_current}
+      new_current = Enum.reverse(new_current)
+
+      IO.puts("New current: #{inspect(new_current)}")
+      %Params{params | current: new_current}
     end
 
     def get_total_iterations(%Params{total_iterations: total_iterations} = params) do
@@ -117,7 +121,7 @@ defmodule GridSearch do
   def search(grid_search, callback) do
     accumulator = Accumulator.new(grid_search.accum_type)
 
-    {accum, _} =
+    {:ok, accum, params} =
       Enum.reduce(
         0..(trunc(Params.get_total_iterations(grid_search.params)) - 1),
         {:ok, accumulator, grid_search.params},
@@ -136,8 +140,18 @@ defmodule GridSearch do
     true_result = Accumulator.get_result(accum)
     true_input = Accumulator.get_input(accum)
 
+    IO.puts("accumulator final: #{inspect(accum)}")
+    IO.puts("Params final: #{inspect(params)}")
     IO.puts("result: #{true_result}")
     IO.puts("input: #{inspect(true_input)}")
+
+    %GridSearch{
+      params: params,
+      accum_type: grid_search.accum_type,
+      result: true_result,
+      total_inputs: Params.get_total_iterations(params),
+      input: true_input
+    }
   end
 
   def fetch(data, key) do

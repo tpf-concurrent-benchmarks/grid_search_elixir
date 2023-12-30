@@ -26,9 +26,10 @@ defmodule Worker do
       _ -> raise "Invalid arguments for callback function"
     end
 
-    result = GridSearch.search(grid_search, callback_function)
+    grid_search = GridSearch.search(grid_search, callback_function)
 
-    IO.puts("Final Result: #{result.result}")
-    IO.puts("Final Input: #{inspect(result.input)}")
+    IO.puts("Final Result: #{grid_search.result}")
+    IO.puts("Final Input parameters: #{inspect(grid_search.input)}")
+    IO.puts("Total iterations: #{inspect(grid_search.total_inputs)}")
   end
 end
