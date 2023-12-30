@@ -10,7 +10,10 @@ defmodule GridSearch do
     def new(accum_type) do
       case accum_type do
         "MAX" ->
-          %Accumulator{true_result: :math.pow(2.0, -1022), callback: &GridSearch.Accumulator.max/3}
+          %Accumulator{
+            true_result: :math.pow(2.0, -1022),
+            callback: &GridSearch.Accumulator.max/3
+          }
 
         "MIN" ->
           %Accumulator{
@@ -82,7 +85,8 @@ defmodule GridSearch do
       {new_current, _} =
         Enum.zip([current, step, finish, start])
         |> Enum.reverse()
-        |> Enum.reduce({[], false}, fn {current_val, step_val, finish_val, start_val}, {acc, incremented} ->
+        |> Enum.reduce({[], false}, fn {current_val, step_val, finish_val, start_val},
+                                       {acc, incremented} ->
           if incremented do
             {[current_val | acc], incremented}
           else
@@ -104,7 +108,7 @@ defmodule GridSearch do
 
     {:ok, accum, params} =
       Enum.reduce(
-        0..(trunc(grid_search.params.total_iterations - 1)),
+        0..trunc(grid_search.params.total_iterations - 1),
         {:ok, accumulator, grid_search.params},
         fn _, {:ok, acc, params} ->
           current = Params.get_current(params)

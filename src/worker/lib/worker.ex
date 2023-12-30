@@ -22,8 +22,12 @@ defmodule Worker do
     }
 
     callback_function = fn
-      parameters -> Enum.at(parameters, 0) * Enum.at(parameters, 0) + Enum.at(parameters, 1) * Enum.at(parameters, 1)
-      _ -> raise "Invalid arguments for callback function"
+      parameters ->
+        Enum.at(parameters, 0) * Enum.at(parameters, 0) +
+          Enum.at(parameters, 1) * Enum.at(parameters, 1)
+
+      _ ->
+        raise "Invalid arguments for callback function"
     end
 
     grid_search = GridSearch.search(grid_search, callback_function)
