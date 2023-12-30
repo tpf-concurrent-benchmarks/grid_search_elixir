@@ -3,7 +3,11 @@ defmodule Worker do
 
   use Application
 
+  @spec start(Application.app(), Application.restart_type()) :: Supervisor.on_start()
   def start(_type, _args) do
+    config = ConfigReader.get_config("../worker/resources/config.json", :worker)
+    IO.inspect(config)
+
     children = [
       {Task.Supervisor, name: BaseProtocol.TaskSupervisor}
     ]

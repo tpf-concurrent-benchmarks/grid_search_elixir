@@ -1,0 +1,6 @@
+{
+    "metrics": {
+      "host": "graphite",
+      "port": 8125
+    }
+}
