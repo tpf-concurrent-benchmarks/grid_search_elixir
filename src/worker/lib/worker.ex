@@ -22,7 +22,7 @@ defmodule Worker do
     }
 
     callback_function = fn
-      parameters -> parameters[0] * parameters[0] + parameters[1] * parameters[1]
+      parameters -> Enum.at(parameters, 0) * Enum.at(parameters, 0) + Enum.at(parameters, 1) * Enum.at(parameters, 1)
       _ -> raise "Invalid arguments for callback function"
     end
 

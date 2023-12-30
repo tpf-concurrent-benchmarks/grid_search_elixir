@@ -4,17 +4,17 @@ defmodule GridSearch do
   defmodule Accumulator do
     @moduledoc false
 
-    defstruct true_result: 0.0, true_input: %{}, callback: :avg
+    defstruct true_result: 0.0, true_input: %{}, callback: &GridSearch.Accumulator.avg/2
 
     def new(accum_type) do
       case accum_type do
         "MAX" ->
-          %Accumulator{true_result: :math.pow(2.0, -1022), callback: &max/2}
+          %Accumulator{true_result: :math.pow(2.0, -1022), callback: &GridSearch.Accumulator.max/3}
 
         "MIN" ->
           %Accumulator{
             true_result: :math.pow(2.0, 1023) * (2.0 - :math.pow(2.0, -52)),
-            callback: &min/2
+            callback: &GridSearch.Accumulator.min/3
           }
 
         _ ->
@@ -23,8 +23,12 @@ defmodule GridSearch do
     end
 
     def accumulate(accumulator, res, current) do
+      IO.puts("Accumulator: #{inspect(accumulator)}")
+      IO.puts("Res: #{res}")
+      IO.puts("Current in accumulator: #{inspect(current)}")
       callback_fun = accumulator.callback
-      %{accumulator | callback: callback_fun.(res, current)}
+      #IO.puts("Callback fun resultado: #{inspect(callback_fun.(res, current))}")
+      callback_fun.(res, current, accumulator)
     end
 
     def get_result(%{true_result: result} = accumulator) do
@@ -35,7 +39,7 @@ defmodule GridSearch do
       input
     end
 
-    defp max(res, current, %{true_result: true_result} = accumulator) do
+    def max(res, current, %{true_result: true_result} = accumulator) do
       if res > true_result do
         %{accumulator | true_result: res, true_input: current}
       else
@@ -43,7 +47,7 @@ defmodule GridSearch do
       end
     end
 
-    defp min(res, current, %{true_result: true_result} = accumulator) do
+    def min(res, current, %{true_result: true_result} = accumulator) do
       if res < true_result do
         %{accumulator | true_result: res, true_input: current}
       else
@@ -51,7 +55,7 @@ defmodule GridSearch do
       end
     end
 
-    defp avg(res, %{true_result: true_result} = accumulator) do
+    def avg(res, %{true_result: true_result} = accumulator) do
       %{accumulator | true_result: true_result + res}
     end
   end
@@ -88,14 +92,19 @@ defmodule GridSearch do
     end
 
     def next(%Params{start: start, finish: finish, step: step, current: current} = params) do
-      new_current =
-        Enum.reduce_while(step, {current, params}, fn step_val, {current_acc, params_acc} ->
-          if current_acc + step_val < Enum.at(finish, 0) do
-            {:cont, {current_acc + step_val, params_acc}}
-          else
-            {:halt, %{params_acc | current: start}}
-          end
-        end)
+      list_size = length(current)
+      {new_current, _} = Enum.with_index(current)
+      |> Enum.reverse()
+      |> Enum.reduce_while({current, false}, fn {current_val, index}, {acc, changed} ->
+        step_val = Enum.at(step, list_size - 1 - index)
+        finish_val = Enum.at(finish, list_size - 1 - index)
+        start_val = Enum.at(start, list_size - 1 - index)
+        if current_val + step_val < finish_val and not changed do
+          {:cont, {List.replace_at(acc, list_size - 1 - index, current_val + step_val), true}}
+        else
+          {:cont, {List.replace_at(acc, list_size - 1 - index, start_val), changed}}
+        end
+      end)
 
       %{params | current: new_current}
     end
@@ -111,15 +120,16 @@ defmodule GridSearch do
     {accum, _} =
       Enum.reduce(
         0..(trunc(Params.get_total_iterations(grid_search.params)) - 1),
-        {:ok, accumulator},
-        fn _, {:ok, acc} ->
-          current = Params.get_current(grid_search.params)
-          IO.puts(inspect(current))
-          IO.puts(inspect(grid_search.params))
+        {:ok, accumulator, grid_search.params},
+        fn _, {:ok, acc, params} ->
+          current = Params.get_current(params)
+          IO.puts("Current: #{inspect(current)}")
+          IO.puts("Grid search params: #{inspect(params)}")
           res = callback.(current)
           new_acc = Accumulator.accumulate(acc, res, current)
-          new_params = Params.next(grid_search.params)
-          {new_acc, new_params}
+          new_params = Params.next(params)
+          IO.puts("New params: #{inspect(new_params)}")
+          {:ok, new_acc, new_params}
         end
       )
 
