@@ -3,6 +3,10 @@ defmodule Worker do
 
   use Application
 
+  def main(args \\ []) do
+    start(:normal, args)
+  end
+
   @spec start(Application.app(), Application.restart_type()) :: Supervisor.on_start()
   def start(_type, _args) do
     config = ConfigReader.get_config("../worker/resources/config.json", :worker)

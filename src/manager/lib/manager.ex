@@ -3,6 +3,10 @@ defmodule Manager do
 
   use Application
 
+  def main(args \\ []) do
+    start(:normal, args)
+  end
+
   @spec start(Application.app(), Application.restart_type()) :: Supervisor.on_start()
   def start(_type, _args) do
     interval = Interval.newInterval(0, 10, 1)
