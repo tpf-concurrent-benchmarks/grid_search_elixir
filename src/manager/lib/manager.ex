@@ -5,7 +5,6 @@ defmodule Manager do
 
   @spec start(Application.app(), Application.restart_type()) :: Supervisor.on_start()
   def start(_type, _args) do
-    IO.puts("Hello, world!")
     interval = Interval.newInterval(0, 10, 1)
     IO.inspect(interval)
     # IO.inspect(Interval.split(interval, 2))
@@ -18,7 +17,7 @@ defmodule Manager do
     # IO.inspect(partition)
     # IO.puts("end review")
 
-    config = ConfigProvider.get_config("../manager/resources/config.json")
+    config = ConfigReader.get_config("../manager/resources/config.json", :manager)
     IO.inspect(config)
 
     children = [
