@@ -2,10 +2,6 @@ defmodule ManagerTest do
   use ExUnit.Case
   doctest Manager
 
-  test "greets the world" do
-    assert Manager.hello() == :world
-  end
-
   test "TestPartitionsOne" do
     intervals = [
       Interval.newInterval(0, 10, 5),
@@ -13,8 +9,30 @@ defmodule ManagerTest do
       Interval.newInterval(0, 10, 5)
     ]
 
-    nIntervals = len(intervals)
+    nIntervals = length(intervals)
     maxChunkSize = 5
     partition = Partition.newPartition(intervals, nIntervals, maxChunkSize)
+
+    assert partition.nIntervals == nIntervals
+    assert length(partition.intervals) == nIntervals
+  end
+
+  test "TestPartitionsPerInterval" do
+    intervals = [
+      Interval.newInterval(4, 8, 1),
+      Interval.newInterval(4, 8, 1),
+      Interval.newInterval(8, 10, 1 )
+    ]
+
+    nIntervals = length(intervals)
+    maxChunkSize = 5
+    partition = Partition.newPartition(intervals, nIntervals, maxChunkSize)
+
+    partitionPerInterval = Partition.calculatePartitionPerInterval(partition, 3)
+
+    assert length(partitionPerInterval) == nIntervals
+
+    expected = [3, 1, 1]
+    assert partitionPerInterval == expected
   end
 end
