@@ -72,9 +72,6 @@ defmodule Interval do
         interval.precision
       )
 
-    IO.puts("subStart: #{inspect(subStart)}")
-    IO.puts("subEnd: #{inspect(subEnd)}")
-
     new_intervals = [newInterval(subStart, subEnd, interval.step) | intervals]
 
     if currentSubIntervalsFull < nSubIntervalsFull - 1 do
@@ -92,16 +89,13 @@ defmodule Interval do
 
   def split_unevenly(interval, n_partitions) do
     maxElemsPerInterval = round(:math.ceil(interval.size / n_partitions))
-    # IO.puts("maxElemsPerInterval: #{maxElemsPerInterval}") ok
 
     nSubIntervalsFull =
       round(:math.floor((interval.size - n_partitions) / (maxElemsPerInterval - 1)))
 
-    # IO.puts("nSubIntervalsFull: #{nSubIntervalsFull}") ok
 
     {intervals, subEnd} = sub_split(interval, maxElemsPerInterval, nSubIntervalsFull)
-    # IO.puts("intervals: #{inspect(intervals)}") not ok
-    # IO.puts("subEnd: #{inspect(subEnd)}") ok
+
     intervalReminder = newInterval(subEnd, interval.end, interval.step)
     subIntervalsReminder = split(intervalReminder, n_partitions - nSubIntervalsFull)
     intervals ++ subIntervalsReminder
