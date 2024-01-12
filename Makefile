@@ -1,5 +1,5 @@
 N_WORKERS=2
-WORKER_REPLICAS ?= 2
+WORKER_REPLICAS ?=2
 SECRET ?= secret
 
 init:
@@ -76,7 +76,6 @@ deploy_local:
 	SECRET=$(SECRET) \
 	docker stack deploy \
 	-c docker/service.yml \
-	-c docker/monitor.yml \
 	gs_elixir
 
 remove_local:
