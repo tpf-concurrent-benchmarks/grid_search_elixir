@@ -44,8 +44,16 @@ defmodule BaseWorker do
 
       @impl true
       def handle_cast(:no_work, {source, sink, pending, worker_type, done, other}) do
-        not done && GenServer.call(sink, :unregister_worker)
-        {:noreply, {source, sink, pending, worker_type, true, other}}
+        # not done && GenServer.call(sink, :unregister_worker)
+        # {:noreply, {source, sink, pending, worker_type, true, other}}
+        if length(pending) == 0 do
+          not done && GenServer.call(sink, :unregister_worker)
+          {:noreply, {source, sink, pending, worker_type, true, other}}
+        else
+          # If there are pending results, those will eventually be sent, marking the worker as ready again.
+          # Waiting for the pending results to be empty makes the unregister happen last.
+          {:noreply, state}
+        end
       end
 
       @impl true
