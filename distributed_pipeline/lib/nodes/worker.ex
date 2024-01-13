@@ -43,7 +43,7 @@ defmodule BaseWorker do
       end
 
       @impl true
-      def handle_cast(:no_work, {source, sink, pending, worker_type, done, other}) do
+      def handle_cast(:no_work, {source, sink, pending, worker_type, done, other}=state) do
         # not done && GenServer.call(sink, :unregister_worker)
         # {:noreply, {source, sink, pending, worker_type, true, other}}
         if length(pending) == 0 do

@@ -9,21 +9,7 @@ defmodule WorkSource do
   @impl true
   def init(_params) do
     interval_list = [{
-      [0, 10, 1],
-      [0, 10, 1],
-      [0, 10, 1],
-      "MAX"
-    },
-    {
-      [0, 10, 1],
-      [0, 10, 1],
-      [0, 10, 1],
-      "MAX"
-    },
-    {
-      [0, 10, 1],
-      [0, 10, 1],
-      [0, 10, 1],
+      [0.0, 0.0], [1.0, 1.0], [0.1, 0.1],
       "MAX"
     }]
     {:ok, interval_list}
