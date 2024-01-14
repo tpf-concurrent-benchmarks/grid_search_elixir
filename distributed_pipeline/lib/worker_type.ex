@@ -28,7 +28,7 @@ defmodule GridSearchWorker do
     end
 
     grid_search = GridSearch.search(grid_search, callback_function)
-    grid_search
+    {:ok, grid_search.result, grid_search.input, grid_search.total_inputs}
     # 0
   end
 

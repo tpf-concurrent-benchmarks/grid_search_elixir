@@ -54,7 +54,8 @@ defmodule WorkSink do
 
   @impl true
   def handle_cast({:work, data}, {fw, results}) do
-    IO.puts "Sink received: #{data}"
+    # IO.inspect "Sink received: #{data}"
+    IO.puts("Sink received: #{inspect(data)}")
     {:noreply, {fw, results+1}}
   end
 
