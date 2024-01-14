@@ -10,25 +10,37 @@ defmodule Manager do
   @spec start(Application.app(), Application.restart_type()) :: Supervisor.on_start()
   def start(_type, _args) do
     interval = Interval.newInterval(0, 10, 1)
-    IO.inspect(interval)
+    # IO.inspect(interval)
     # IO.inspect(Interval.split(interval, 2))
-    IO.inspect(Interval.split(interval, 3))
-    # interval2 = Interval.newInterval(0, 10, 1)
-    # interval3 = Interval.newInterval(0, 10, 1)
+    # IO.inspect(Interval.split(interval, 3))
+    interval2 = Interval.newInterval(0, 10, 1)
+    interval3 = Interval.newInterval(0, 10, 1)
 
-    # partition = Partition.newPartition([interval, interval2, interval3], 1, 2)
+    partition = Partition.newPartition([interval, interval2, interval3], 3, 50)
     # IO.inspect(Partition.calculatePartitionPerInterval(partition, 3))
     # IO.inspect(partition)
-    # IO.puts("end review")
+    # for i <- 1..round(partition.nPartitions) do
+    #   {partition, intervalss} = Partition.next(partition)
+    #   # IO.inspect(intervalss)
+    #   IO.inspect(partition)
+    # end
+    IO.inspect(partition)
+    Enum.reduce(1..round(partition.nPartitions), partition, fn _, acc ->
+      {acc, intervals} = Partition.next(acc)
+      IO.inspect(intervals)
+      acc
+    end)
 
-    config = ConfigReader.get_config("../manager/resources/config.json", :manager)
-    IO.inspect(config)
+    IO.puts("end review")
 
-    children = [
-      {Task.Supervisor, name: BaseProtocol.TaskSupervisor}
-    ]
+    # config = ConfigReader.get_config("../manager/resources/config.json", :manager)
+    # IO.inspect(config)
 
-    opts = [strategy: :one_for_one, name: BaseProtocol.Supervisor]
-    Supervisor.start_link(children, opts)
+    # children = [
+    #   {Task.Supervisor, name: BaseProtocol.TaskSupervisor}
+    # ]
+
+    # opts = [strategy: :one_for_one, name: BaseProtocol.Supervisor]
+    # Supervisor.start_link(children, opts)
   end
 end
