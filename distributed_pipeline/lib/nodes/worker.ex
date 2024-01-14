@@ -51,20 +51,22 @@ defmodule BaseWorker do
       end
 
       @impl true
-      def handle_cast({:get_work, pid}, {source, sink, pending, worker_type, done, other} = state) do
+      def handle_cast({:get_work, pid}, {source, sink, pending, worker_type, done, other}) do
 
         [head | tail] = pending # List has at least one element
 
         GenServer.cast(pid, {:work, head}) # send result
 
-        # Unregister worker if it already received :no_work
-        if done && length(tail) == 0 do
-          GenServer.call(sink, :unregister_worker)
+        # Mark source as ready if the queue just got below the limit
+        if length(pending) == pending_limit() && not done do
+          mark_ready(source)
         end
 
-        # Mark source as ready if the queue just got below the limit
-        if length(pending) == pending_limit() do
-          not done && mark_ready(source)
+        # Unregister worker if there is no more work
+        if done && length(tail) == 0 do
+          # We could ping the worker to sync and ensure ordering.
+          # But I think it is unnecessary w/ the single-ready-policy
+          GenServer.call(sink, :unregister_worker)
         end
 
         {:noreply, {source, sink, tail, worker_type, done, other}}
