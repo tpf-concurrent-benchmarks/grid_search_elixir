@@ -5,7 +5,7 @@ defmodule GridSearch do
   defmodule Accumulator do
     @moduledoc false
 
-    defstruct true_result: 0.0, true_input: %{}, callback: &GridSearch.Accumulator.avg/2
+    defstruct true_result: 0.0, true_input: %{}, callback: &GridSearch.Accumulator.avg/3
 
     def new(accum_type) do
       case accum_type do
@@ -47,8 +47,8 @@ defmodule GridSearch do
       end
     end
 
-    def avg(res, %{true_result: true_result} = accumulator) do
-      %{accumulator | true_result: true_result + res}
+    def avg(res, current, %{true_result: true_result} = accumulator) do
+      %{accumulator | true_result: true_result + res, true_input: current}
     end
   end
 

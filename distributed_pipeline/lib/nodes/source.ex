@@ -11,6 +11,12 @@ defmodule WorkSource do
     interval_list = [{
       [0.0, 0.0], [1.0, 1.0], [0.1, 0.1],
       "MAX"
+    }, {
+      [0.0, 0.0], [1.0, 1.0], [0.1, 0.1],
+      "MIN"
+    }, {
+      [0.0, 0.0], [1.0, 1.0], [0.1, 0.1],
+      "AVG"
     }]
     {:ok, interval_list}
   end
