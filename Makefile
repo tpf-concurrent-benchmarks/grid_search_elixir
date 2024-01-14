@@ -59,14 +59,6 @@ _script_permisions:
 _common_folders:
 	mkdir -p configs/graphite
 	mkdir -p configs/grafana_config
-	mkdir -p shared
-	mkdir -p shared/input
-	rm -rf shared/formatted || true
-	mkdir -p shared/formatted
-	rm -rf shared/scaled || true
-	mkdir -p shared/scaled
-	rm -rf shared/output || true
-	mkdir -p shared/output
 .PHONY: _common_folders
 
 setup: _script_permisions _common_folders
