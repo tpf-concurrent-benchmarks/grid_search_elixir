@@ -77,7 +77,7 @@ defmodule GridSearch do
       }
     end
 
-    def get_current(%Params{current: current} = params) do
+    def get_current(%Params{current: current} = _params) do
       current
     end
 

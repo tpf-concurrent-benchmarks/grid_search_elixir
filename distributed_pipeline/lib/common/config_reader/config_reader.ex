@@ -1,9 +1,11 @@
 defmodule ConfigReader do
   @behaviour Config.Provider
 
+  require Logger
+
   def init(path) when is_binary(path), do: path
 
-  defp load(_config, path) do
+  def load(_config, path) do
     {:ok, _} = Application.ensure_all_started(:jason)
 
     json = path |> File.read!() |> Jason.decode!()
