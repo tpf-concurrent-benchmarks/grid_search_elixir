@@ -16,10 +16,6 @@ _setup: init build
 remove:
 	docker stack rm gs_elixir
 
-deploy:
-	mkdir -p graphite
-	N_WORKERS=${N_WORKERS} docker compose -f=docker-compose-deploy-local.yml up --build
-
 deploy_remote:
 	mkdir -p graphite
 	N_WORKERS=${N_WORKERS} docker stack deploy -c docker-compose-deploy.yml gs_elixir
@@ -68,6 +64,7 @@ deploy_local:
 	SECRET=$(SECRET) \
 	docker stack deploy \
 	-c docker/service.yml \
+	-c docker/monitor.yml \
 	gs_elixir
 
 remove_local:
