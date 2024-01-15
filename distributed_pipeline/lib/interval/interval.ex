@@ -5,7 +5,7 @@ defmodule Interval do
             end: 0.0,
             step: 0.0,
             size: 0,
-            precision: 10
+            precision: 5
 
   def newInterval(start, end_interval, step) do
     size = round(:math.ceil((end_interval - start) / step))

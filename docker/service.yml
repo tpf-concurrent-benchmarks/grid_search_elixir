@@ -7,7 +7,9 @@ x-worker-template: &worker-template
     - ../distributed_pipeline:/app
     - ../scripts:/app/scripts
   command: sh -c "/app/scripts/setup.sh ; iex --sname worker --cookie ${SECRET} -S mix"
-
+  environment:
+    - REPLICA={{.Task.Slot}}
+    
 services:
   worker:
     <<: *worker-template

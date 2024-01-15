@@ -129,7 +129,7 @@ manager_shell:
 	docker exec -it $(shell docker ps -q -f name=gs_elixir_manager) sh
 
 manager_run_gs:
-	docker exec -it $(shell docker ps -q -f name=gs_elixir_manager) iex --sname manager --cookie $(SECRET) -S mix run -e "DistributedPipeline.distributed_gs()"
+	docker exec -it $(shell docker ps -q -f name=gs_elixir_manager) iex --sname manager --cookie $(SECRET) -S mix run -e "DistributedPipeline.main()"
 
 manager_logs:
 	docker service logs -f $(shell docker service ls -q -f name=gs_elixir_manager) --raw

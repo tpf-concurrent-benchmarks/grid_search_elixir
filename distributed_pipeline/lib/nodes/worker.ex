@@ -125,7 +125,7 @@ defmodule BatchedWorker do
   end
 end
 
-defmodule MeasuredBatchedWorker do
+defmodule MeasuredWorker do
   use BaseWorker
 
   def init({worker_type, source, sink}) do
@@ -135,7 +135,7 @@ defmodule MeasuredBatchedWorker do
     {:ok, {source, sink, pending_work, worker_type, false, logger}}
   end
 
-  def do_work_and_measure(worker_type, work, logger) do
+  def do_work( worker_type, work, logger ) do
     start_time = :os.system_time(:millisecond)
     res = worker_type.do_work(work)
     end_time = :os.system_time(:millisecond)
@@ -145,11 +145,8 @@ defmodule MeasuredBatchedWorker do
     res
   end
 
-  defp do_work(worker_type, work, logger) do
-    Enum.map(work, &do_work_and_measure(worker_type, &1, logger))
-  end
-
   defp cleanup(logger) do
     MetricsLogger.close(logger)
   end
+
 end

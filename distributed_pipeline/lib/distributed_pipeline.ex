@@ -1,6 +1,6 @@
 defmodule DistributedPipeline do
   def start_worker_proxy(worker_type, source, sink) do
-    {:ok, worker_pid} = Worker.start_link(worker_type, source, sink)
+    {:ok, worker_pid} = MeasuredWorker.start_link(worker_type, source, sink)
 
     # Send worker_pid when asked for it
     receive do
@@ -34,9 +34,25 @@ defmodule DistributedPipeline do
     end
   end
 
-  # DistributedPipeline.distributed_ip
-  def distributed_ip do
-    {:ok, source} = WorkSource.start_link("shared/input", 25)
+  def main do
+    {:ok, logger} = CustomMetricsLogger.connect("manager")
+    start_time = :os.system_time(:millisecond)
+    distributed_gs()
+    end_time = :os.system_time(:millisecond)
+    duration = end_time - start_time
+    IO.puts("Completion time: #{duration} ms")
+    MetricsLogger.timing(logger, "completion_time", duration)
+    MetricsLogger.close(logger)
+  end
+
+  # DistributedPipeline.distributed_gs
+  def distributed_gs do
+    interval = Interval.newInterval(-600, 600, 2) #TODO: change back to 0.2
+    interval2 = Interval.newInterval(-600, 600, 2)
+    interval3 = Interval.newInterval(-600, 600, 2)
+
+    partition = Partition.newPartition([interval, interval2, interval3], 3, 10800000)
+    {:ok, source} = WorkSource.start_link(partition, "MIN")
     IO.puts("Source pid: #{inspect(source)}")
     {:ok, sink} = WorkSink.start_link()
     IO.puts("Sink pid: #{inspect(sink)}")
