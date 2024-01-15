@@ -26,7 +26,7 @@ defmodule WorkSource do
   end
 
   @impl true
-  def handle_cast({:ready, pid}, {partition, op}) do
+  def handle_cast({:ready, pid}, {partition, accum_type}) do
     # TODO: pass here the interval cartesian product iterator
     # GenServer.cast(pid, :no_work)
     # GenServer.cast(pid, {:work, serving_files})
@@ -35,8 +35,8 @@ defmodule WorkSource do
       {:noreply, []}
     else
       {partition, intervals} = Partition.next(partition)
-      GenServer.cast(pid, {:work, intervals})
-      {:noreply, {partition, op}}
+      GenServer.cast(pid, {:work, {intervals, accum_type}})
+      {:noreply, {partition, accum_type}}
     end
   end
 

@@ -57,16 +57,18 @@ defmodule GridSearch do
 
     def new(start, finish, step) do
       total_iterations =
-        Enum.reduce(start, 1, fn s, acc ->
-          cum_param =
-            Float.floor(
-              (Enum.at(finish, trunc(s)) - Enum.at(start, trunc(s))) / Enum.at(step, trunc(s))
-            )
+        Enum.reduce(
+          Enum.zip([start, finish, step]),
+          1,
+          fn {start_elem, finish_elem, step_elem}, acc ->
+            cum_param =
+              Float.floor((finish_elem - start_elem) / step_elem)
 
-          cum_param = if cum_param == 0, do: 1, else: cum_param
+            cum_param = if cum_param == 0, do: 1, else: cum_param
 
-          acc * cum_param
-        end)
+            acc * cum_param
+          end
+        )
 
       %Params{
         start: start,

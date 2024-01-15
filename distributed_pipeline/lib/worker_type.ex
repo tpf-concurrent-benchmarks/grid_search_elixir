@@ -6,8 +6,15 @@ end
 defmodule GridSearchWorker do
   @behaviour WorkerBehaviour
 
-  def do_work({starts, ends, steps, accum_type} = params) do
-    IO.inspect(params)
+  def transform_params(intervals) do
+    Enum.reduce(intervals, {[], [], []}, fn interval, {starts, ends, steps} ->
+      {starts ++ [interval.start], ends ++ [interval.end], steps ++ [interval.step]}
+    end)
+  end
+
+  def do_work({intervals, accum_type} = params) do
+    {starts, ends, steps} = transform_params(intervals)
+    IO.inspect(transform_params(intervals))
     params = GridSearch.Params.new(starts, ends, steps)
 
     grid_search = %GridSearch{
