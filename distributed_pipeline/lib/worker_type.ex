@@ -12,7 +12,7 @@ defmodule GridSearchWorker do
     end)
   end
 
-  def do_work({intervals, accum_type} = params) do
+  def do_work({intervals, accum_type}) do
     {starts, ends, steps} = transform_params(intervals)
     IO.inspect(transform_params(intervals))
     params = GridSearch.Params.new(starts, ends, steps)
