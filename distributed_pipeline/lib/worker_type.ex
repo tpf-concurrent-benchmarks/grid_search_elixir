@@ -6,7 +6,7 @@ end
 defmodule GridSearchWorker do
   @behaviour WorkerBehaviour
 
-  def do_work({starts, ends, steps, accum_type}=params) do
+  def do_work({starts, ends, steps, accum_type} = params) do
     IO.inspect(params)
     params = GridSearch.Params.new(starts, ends, steps)
 

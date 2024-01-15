@@ -13,6 +13,7 @@ defmodule BaseWorker do
         other = nil
         {:ok, {source, sink, pending_work, worker_type, false, other}}
       end
+
       defoverridable init: 1
 
       @impl true
@@ -27,13 +28,17 @@ defmodule BaseWorker do
         res = do_work(worker_type, work, other)
 
         receiver = GenServer.call(sink, :request_receiver)
-        new_state = case receiver do
-          {:pid, pid} ->
-            GenServer.cast(pid, {:work, res}) # send result
-            state
-          :unavailable ->
-            {source, sink, [work | pending], worker_type, done, other}
-        end
+
+        new_state =
+          case receiver do
+            {:pid, pid} ->
+              # send result
+              GenServer.cast(pid, {:work, res})
+              state
+
+            :unavailable ->
+              {source, sink, [work | pending], worker_type, done, other}
+          end
 
         if length(pending) < pending_limit() do
           not done && mark_ready(source)
@@ -47,15 +52,17 @@ defmodule BaseWorker do
         if length(pending) == 0 do
           GenServer.call(sink, :unregister_worker)
         end
+
         {:noreply, {source, sink, pending, worker_type, true, other}}
       end
 
       @impl true
       def handle_cast({:get_work, pid}, {source, sink, pending, worker_type, done, other}) do
+        # List has at least one element
+        [head | tail] = pending
 
-        [head | tail] = pending # List has at least one element
-
-        GenServer.cast(pid, {:work, head}) # send result
+        # send result
+        GenServer.cast(pid, {:work, head})
 
         # Mark source as ready if the queue just got below the limit
         if length(pending) == pending_limit() && not done do
@@ -73,7 +80,11 @@ defmodule BaseWorker do
       end
 
       @impl true
-      def handle_call(:stop, _from, {_source, _sink, _pending, _worker_type, _done, other} = state) do
+      def handle_call(
+            :stop,
+            _from,
+            {_source, _sink, _pending, _worker_type, _done, other} = state
+          ) do
         cleanup(other)
         {:stop, :normal, :ok, state}
       end
@@ -86,12 +97,13 @@ defmodule BaseWorker do
         10
       end
 
-      defp do_work(_worker_type, _work, _other), do: raise "Not implemented"
+      defp do_work(_worker_type, _work, _other), do: raise("Not implemented")
       defoverridable do_work: 3
 
       defp cleanup(_other) do
         :ok
       end
+
       defoverridable cleanup: 1
     end
   end
@@ -123,7 +135,7 @@ defmodule MeasuredBatchedWorker do
     {:ok, {source, sink, pending_work, worker_type, false, logger}}
   end
 
-  def do_work_and_measure( worker_type, work, logger ) do
+  def do_work_and_measure(worker_type, work, logger) do
     start_time = :os.system_time(:millisecond)
     res = worker_type.do_work(work)
     end_time = :os.system_time(:millisecond)
@@ -140,5 +152,4 @@ defmodule MeasuredBatchedWorker do
   defp cleanup(logger) do
     MetricsLogger.close(logger)
   end
-
 end
