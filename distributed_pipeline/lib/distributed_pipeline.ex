@@ -47,11 +47,12 @@ defmodule DistributedPipeline do
 
   # DistributedPipeline.distributed_gs
   def distributed_gs do
-    interval = Interval.newInterval(-600, 600, 2) #TODO: change back to 0.2
+    # TODO: change back to 0.2
+    interval = Interval.newInterval(-600, 600, 2)
     interval2 = Interval.newInterval(-600, 600, 2)
     interval3 = Interval.newInterval(-600, 600, 2)
 
-    partition = Partition.newPartition([interval, interval2, interval3], 3, 10800000)
+    partition = Partition.newPartition([interval, interval2, interval3], 3, 10_800_000)
     {:ok, source} = WorkSource.start_link(partition, "MIN")
     IO.puts("Source pid: #{inspect(source)}")
     {:ok, sink} = WorkSink.start_link()

@@ -135,7 +135,7 @@ defmodule MeasuredWorker do
     {:ok, {source, sink, pending_work, worker_type, false, logger}}
   end
 
-  def do_work( worker_type, work, logger ) do
+  def do_work(worker_type, work, logger) do
     start_time = :os.system_time(:millisecond)
     res = worker_type.do_work(work)
     end_time = :os.system_time(:millisecond)
@@ -148,5 +148,4 @@ defmodule MeasuredWorker do
   defp cleanup(logger) do
     MetricsLogger.close(logger)
   end
-
 end
