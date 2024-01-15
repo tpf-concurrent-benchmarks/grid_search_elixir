@@ -35,8 +35,8 @@ defmodule Manager do
 
     IO.puts("end review")
 
-    # config = ConfigReader.get_config("../manager/resources/config.json", :manager)
-    # IO.inspect(config)
+    #config = ConfigReader.get_config("../manager/resources/data.json", :manager)
+    #IO.inspect(config)
 
     # children = [
     #   {Task.Supervisor, name: BaseProtocol.TaskSupervisor}

@@ -77,10 +77,6 @@ defmodule GridSearch do
       }
     end
 
-    def get_current(%Params{current: current} = _params) do
-      current
-    end
-
     def next(%Params{start: start, finish: finish, step: step, current: current} = params) do
       {new_current, _} =
         Enum.zip([current, step, finish, start])
@@ -111,7 +107,7 @@ defmodule GridSearch do
         0..trunc(grid_search.params.total_iterations - 1),
         {:ok, accumulator, grid_search.params},
         fn _, {:ok, acc, params} ->
-          current = Params.get_current(params)
+          current = params.current
           res = callback.(current)
           new_acc = Accumulator.accumulate(acc, res, current)
           new_params = Params.next(params)
