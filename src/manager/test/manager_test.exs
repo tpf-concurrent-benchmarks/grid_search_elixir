@@ -21,7 +21,7 @@ defmodule ManagerTest do
     intervals = [
       Interval.newInterval(4, 8, 1),
       Interval.newInterval(4, 8, 1),
-      Interval.newInterval(8, 10, 1 )
+      Interval.newInterval(8, 10, 1)
     ]
 
     nIntervals = length(intervals)
@@ -61,12 +61,13 @@ defmodule ManagerTest do
         Interval.newInterval(0, 10, 5)
       ]
     ]
-    expected = List.flatten(expected) |> Enum.sort
+
+    expected = List.flatten(expected) |> Enum.sort()
 
     mock_callback = fn element -> element end
 
     actual = Partition.partitionGenerator(partition.splitIntervals, mock_callback, [])
-    actual = List.flatten(actual) |> Enum.sort
+    actual = List.flatten(actual) |> Enum.sort()
 
     assert actual == expected
   end
@@ -104,12 +105,13 @@ defmodule ManagerTest do
         Interval.newInterval(0, 10, 5)
       ]
     ]
-    expected = List.flatten(expected) |> Enum.sort
+
+    expected = List.flatten(expected) |> Enum.sort()
 
     mock_callback = fn element -> element end
 
     actual = Partition.partitionGenerator(partition.splitIntervals, mock_callback, [])
-    actual = List.flatten(actual) |> Enum.sort
+    actual = List.flatten(actual) |> Enum.sort()
 
     assert actual == expected
   end

@@ -19,12 +19,20 @@ defmodule Partition do
     partition.currentPartition < partition.nPartitions
   end
 
-  def next(%Partition{splitIntervals: splitIntervals, currentIndex: currentIndex, partitionsPerInterval: partitionsPerInterval, currentPartition: currentPartition} = partition) do
+  def next(
+        %Partition{
+          splitIntervals: splitIntervals,
+          currentIndex: currentIndex,
+          partitionsPerInterval: partitionsPerInterval,
+          currentPartition: currentPartition
+        } = partition
+      ) do
     {new_current, currentIntervals, _} =
       Enum.zip([currentIndex, partitionsPerInterval, splitIntervals])
       |> Enum.reduce({[], [], false}, fn {current_val, finish_val, splitInterval},
-                                     {acc, intervals, incremented} ->
+                                         {acc, intervals, incremented} ->
         interval = Enum.at(splitInterval, current_val)
+
         if incremented do
           {[current_val | acc], [interval | intervals], incremented}
         else
@@ -38,7 +46,9 @@ defmodule Partition do
 
     new_current = Enum.reverse(new_current)
     currentIntervals = Enum.reverse(currentIntervals)
-    {%Partition{partition | currentIndex: new_current, currentPartition: currentPartition + 1}, currentIntervals} #TODO: remove currentPartition if it is not being used anywhere
+    # TODO: remove currentPartition if it is not being used anywhere
+    {%Partition{partition | currentIndex: new_current, currentPartition: currentPartition + 1},
+     currentIntervals}
   end
 
   def calcPartitionsAmount(partitionsPerInterval) do

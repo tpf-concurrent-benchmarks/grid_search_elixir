@@ -25,9 +25,11 @@ defmodule Manager do
     #   IO.inspect(partition)
     # end
     IO.inspect(partition)
+
     Enum.reduce(1..round(partition.nPartitions), partition, fn _, acc ->
       {acc, intervals} = Partition.next(acc)
       IO.inspect(intervals)
+      IO.inspect(acc.currentPartition)
       acc
     end)
 
