@@ -84,7 +84,6 @@ defmodule GridSearch do
     def next(%Params{start: start, finish: finish, step: step, current: current} = params) do
       {new_current, _} =
         Enum.zip([current, step, finish, start])
-        |> Enum.reverse()
         |> Enum.reduce({[], false}, fn {current_val, step_val, finish_val, start_val},
                                        {acc, incremented} ->
           if incremented do
