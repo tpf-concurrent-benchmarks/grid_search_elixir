@@ -5,7 +5,7 @@ SECRET ?= secret
 init:
 	docker swarm init
 
-_setup: init build
+_setup: init
 
 remove:
 	docker stack rm gs_elixir
@@ -126,12 +126,3 @@ worker_logs:
 
 worker1_logs:
 	docker service logs -f $(shell docker service ls -q -f name=gs_elixir_worker.1) --raw
-
-
-deploy_cloud:
-	WORKER_REPLICAS=$(WORKER_REPLICAS) \
-	SECRET=$(SECRET) \
-	docker stack deploy \
-	-c docker/service.yml \
-	-c docker/monitor.yml \
-	gs_elixir
