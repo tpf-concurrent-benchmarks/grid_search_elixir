@@ -5,20 +5,10 @@ SECRET ?= secret
 init:
 	docker swarm init
 
-build:
-	docker rmi grid_search_elixir_worker -f
-	docker rmi grid_search_elixir_manager -f
-	docker build -t grid_search_elixir_worker ./src/ -f ./src/worker/Dockerfile
-	docker build -t grid_search_elixir_manager ./src/ -f ./src/manager/Dockerfile
-
 _setup: init build
 
 remove:
 	docker stack rm gs_elixir
-
-deploy_remote:
-	mkdir -p graphite
-	N_WORKERS=${N_WORKERS} docker stack deploy -c docker-compose-deploy.yml gs_elixir
 
 down_graphite:
 	if docker stack ls | grep -q graphite; then \
@@ -136,3 +126,12 @@ worker_logs:
 
 worker1_logs:
 	docker service logs -f $(shell docker service ls -q -f name=gs_elixir_worker.1) --raw
+
+
+deploy_cloud:
+	WORKER_REPLICAS=$(WORKER_REPLICAS) \
+	SECRET=$(SECRET) \
+	docker stack deploy \
+	-c docker/service.yml \
+	-c docker/monitor.yml \
+	gs_elixir
