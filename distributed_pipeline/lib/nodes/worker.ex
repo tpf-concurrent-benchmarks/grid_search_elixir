@@ -129,6 +129,7 @@ defmodule MeasuredWorker do
   use BaseWorker
 
   def init({worker_type, source, sink}) do
+    :eprof.start_profiling([self()])
     pending_work = []
     replica = System.get_env("REPLICA")
     {:ok, logger} = CustomMetricsLogger.connect(worker_type.name, replica)
@@ -146,6 +147,8 @@ defmodule MeasuredWorker do
   end
 
   defp cleanup(logger) do
+    :eprof.stop_profiling()
+    :eprof.analyze()
     MetricsLogger.close(logger)
   end
 end

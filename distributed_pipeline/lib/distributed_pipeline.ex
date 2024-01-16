@@ -48,7 +48,7 @@ defmodule DistributedPipeline do
   # DistributedPipeline.distributed_gs
   def distributed_gs do
     # TODO: change back to 0.2
-    interval = Interval.newInterval(-600, 600, 2)
+    interval = Interval.newInterval(-600, 600, 20)
     interval2 = Interval.newInterval(-600, 600, 2)
     interval3 = Interval.newInterval(-600, 600, 2)
 
