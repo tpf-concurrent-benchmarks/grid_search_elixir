@@ -53,7 +53,7 @@ defmodule GridSearch do
   end
 
   defmodule Params do
-    defstruct start: [], finish: [], step: [], current: [], total_iterations: 0
+    defstruct step_finish_start: [], current: [], total_iterations: 0
 
     def new(start, finish, step) do
       total_iterations =
@@ -71,18 +71,16 @@ defmodule GridSearch do
         )
 
       %Params{
-        start: start,
-        finish: finish,
-        step: step,
+        step_finish_start: Enum.zip([step, finish, start]),
         current: start,
         total_iterations: total_iterations
       }
     end
 
-    def next(%Params{start: start, finish: finish, step: step, current: current} = params) do
+    def next(%Params{step_finish_start: step_finish_start, current: current} = params) do
       {new_current, _} =
-        Enum.zip([current, step, finish, start])
-        |> Enum.reduce({[], false}, fn {current_val, step_val, finish_val, start_val},
+        Enum.zip([current, step_finish_start])
+        |> Enum.reduce({[], false}, fn {current_val, {step_val, finish_val, start_val}},
                                        {acc, incremented} ->
           if incremented do
             {[current_val | acc], incremented}

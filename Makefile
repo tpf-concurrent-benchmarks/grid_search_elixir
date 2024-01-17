@@ -63,7 +63,6 @@ deploy_local:
 	WORKER_REPLICAS=$(WORKER_REPLICAS) \
 	SECRET=$(SECRET) \
 	docker stack deploy \
-	-c docker/monitor.yml \
 	-c docker/service.yml \
 	gs_elixir
 
