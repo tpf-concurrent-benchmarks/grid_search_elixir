@@ -53,12 +53,12 @@ deploy_local:
 	WORKER_REPLICAS=$(WORKER_REPLICAS) \
 	SECRET=$(SECRET) \
 	docker stack deploy \
-	-c docker/service.yml \
 	-c docker/monitor.yml \
+	-c docker/service.yml \
 	gs_elixir
 
 remove_local:
-	docker stack rm ip_elixir
+	docker stack rm gs_elixir
 
 remove_local_containers:
 	-docker service rm $(shell docker service ls -q -f name=gs_elixir) || echo "No services to remove"
@@ -117,6 +117,9 @@ manager_shell:
 
 manager_run_gs:
 	docker exec -it $(shell docker ps -q -f name=gs_elixir_manager) iex --sname manager --cookie $(SECRET) -S mix run -e "DistributedPipeline.main()"
+
+manager_profile_gs:
+	docker exec -it $(shell docker ps -q -f name=gs_elixir_manager) iex --sname manager --cookie $(SECRET) -S mix profile.eprof -e "DistributedPipeline.main()"
 
 manager_logs:
 	docker service logs -f $(shell docker service ls -q -f name=gs_elixir_manager) --raw

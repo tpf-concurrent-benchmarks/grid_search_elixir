@@ -1,5 +1,5 @@
 defmodule ObjectiveFun do
-  def griewank_fun(parameters) when is_list(parameters) do
+  def griewank_fun(parameters) do
     [a, b, c] = parameters
 
     1.0 / 4000.0 * (a * a + b * b + c * c) -
