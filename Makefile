@@ -67,7 +67,7 @@ deploy_local:
 	gs_elixir
 
 remove_local:
-	docker stack rm ip_elixir
+	docker stack rm gs_elixir
 
 remove_local_containers:
 	-docker service rm $(shell docker service ls -q -f name=gs_elixir) || echo "No services to remove"
