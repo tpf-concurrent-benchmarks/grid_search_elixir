@@ -53,7 +53,7 @@ defmodule GridSearch do
   end
 
   defmodule Params do
-    defstruct start: [], finish: [], step: [], current: [], total_iterations: 0
+    defstruct all_params: [], current: [], total_iterations: 0
 
     def new(start, finish, step) do
       total_iterations =
@@ -70,33 +70,32 @@ defmodule GridSearch do
           end
         )
 
+      all_params = Enum.zip([start, finish, step, start])
       %Params{
-        start: start,
-        finish: finish,
-        step: step,
+        all_params: all_params,
         current: start,
         total_iterations: total_iterations
       }
     end
 
-    def next(%Params{start: start, finish: finish, step: step, current: current} = params) do
-      {new_current, _} =
-        Enum.zip([current, step, finish, start])
-        |> Enum.reduce({[], false}, fn {current_val, step_val, finish_val, start_val},
-                                       {acc, incremented} ->
+    def next(%Params{all_params: all_params} = params) do
+      {new_all_params, new_current, _} = all_params
+        |> Enum.reduce({[], [], false}, fn {start_val, finish_val, step_val, current_val},
+                                       {acc, current, incremented} ->
           if incremented do
-            {[current_val | acc], incremented}
+            {[{start_val, finish_val, step_val, current_val} | acc], [current_val | current], incremented}
           else
             if current_val + step_val < finish_val do
-              {[current_val + step_val | acc], true}
+              {[{start_val, finish_val, step_val, current_val + step_val} | acc], [current_val + step_val | current], true}
             else
-              {[start_val | acc], incremented}
+              {[{start_val, finish_val, step_val, start_val} | acc], [start_val | current], incremented}
             end
           end
         end)
 
       new_current = Enum.reverse(new_current)
-      %Params{params | current: new_current}
+      new_all_params = Enum.reverse(new_all_params)
+      %Params{params | all_params: new_all_params, current: new_current}
     end
   end
 
