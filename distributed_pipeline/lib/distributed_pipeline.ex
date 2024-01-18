@@ -52,7 +52,7 @@ defmodule DistributedPipeline do
     interval2 = Interval.newInterval(-600, 600, 2)
     interval3 = Interval.newInterval(-600, 600, 2)
 
-    partition = Partition.newPartition([interval, interval2, interval3], 3, 10_800_000)
+    partition = Partition.newPartition([interval, interval2, interval3], 3, 1_080_000)
     {:ok, source} = WorkSource.start_link(partition, "MIN")
     IO.puts("Source pid: #{inspect(source)}")
     {:ok, sink} = WorkSink.start_link()
