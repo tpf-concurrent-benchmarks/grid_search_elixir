@@ -71,6 +71,7 @@ defmodule GridSearch do
         )
 
       all_params = Enum.zip([start, finish, step, start])
+
       %Params{
         all_params: all_params,
         current: start,
@@ -79,16 +80,20 @@ defmodule GridSearch do
     end
 
     def next(%Params{all_params: all_params} = params) do
-      {new_all_params, new_current, _} = all_params
+      {new_all_params, new_current, _} =
+        all_params
         |> Enum.reduce({[], [], false}, fn {start_val, finish_val, step_val, current_val},
-                                       {acc, current, incremented} ->
+                                           {acc, current, incremented} ->
           if incremented do
-            {[{start_val, finish_val, step_val, current_val} | acc], [current_val | current], incremented}
+            {[{start_val, finish_val, step_val, current_val} | acc], [current_val | current],
+             incremented}
           else
             if current_val + step_val < finish_val do
-              {[{start_val, finish_val, step_val, current_val + step_val} | acc], [current_val + step_val | current], true}
+              {[{start_val, finish_val, step_val, current_val + step_val} | acc],
+               [current_val + step_val | current], true}
             else
-              {[{start_val, finish_val, step_val, start_val} | acc], [start_val | current], incremented}
+              {[{start_val, finish_val, step_val, start_val} | acc], [start_val | current],
+               incremented}
             end
           end
         end)

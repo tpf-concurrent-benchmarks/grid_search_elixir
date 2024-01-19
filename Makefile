@@ -44,6 +44,7 @@ format:
 	cd ./src/worker && mix format
 	cd ./src/manager && mix format
 	cd ./src/common && mix format
+	cd distributed_pipeline && mix format
 
 test_manager:
 	cd ./src/manager && mix test
