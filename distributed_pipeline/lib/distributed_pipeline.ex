@@ -47,10 +47,14 @@ defmodule DistributedPipeline do
 
   # DistributedPipeline.distributed_gs
   def distributed_gs do
-    # TODO: change back to 0.2
-    interval = Interval.newInterval(-600, 600, 2)
-    interval2 = Interval.newInterval(-600, 600, 2)
-    interval3 = Interval.newInterval(-600, 600, 2)
+    config = ConfigReader.get_config("../resources/data.json", :manager)
+    IO.puts("Config read: #{inspect(config)}")
+    data = Enum.at(config["data"], 0)
+    data2 = Enum.at(config["data"], 1)
+    data3 = Enum.at(config["data"], 2)
+    interval = Interval.newInterval(Enum.at(data, 0), Enum.at(data, 1), Enum.at(data, 2))
+    interval2 = Interval.newInterval(Enum.at(data2, 0), Enum.at(data2, 1), Enum.at(data2, 2))
+    interval3 = Interval.newInterval(Enum.at(data3, 0), Enum.at(data3, 1), Enum.at(data3, 2))
 
     partition = Partition.newPartition([interval, interval2, interval3], 3, 10_800_000)
     {:ok, source} = WorkSource.start_link(partition, "MIN")

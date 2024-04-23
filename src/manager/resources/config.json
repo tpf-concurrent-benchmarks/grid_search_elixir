@@ -1,7 +1,0 @@
-{
-    "host": "worker@worker",
-    "metrics": {
-      "host": "graphite",
-      "port": 8125
-    }
-}

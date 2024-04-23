@@ -18,26 +18,7 @@ down_graphite:
 	fi
 .PHONY: down_graphite
 
-run_worker_local:
-	cd ./src/worker && LOCAL=local elixir --sname worker@localhost -S mix run
 
-run_manager_local:
-	cd ./src/manager && LOCAL=local elixir --sname manager@localhost -S mix run
-
-install_deps_worker_local:
-	cd ./src/worker && LOCAL=local mix deps.get
-
-install_deps_manager_local:
-	cd ./src/manager && LOCAL=local mix deps.get
-
-format:
-	cd ./src/worker && mix format
-	cd ./src/manager && mix format
-	cd ./src/common && mix format
-	cd distributed_pipeline && mix format
-
-test_manager:
-	cd ./src/manager && mix test
 
 #Commands from Nico's version
 _script_permisions:
