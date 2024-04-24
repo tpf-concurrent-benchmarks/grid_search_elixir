@@ -2,7 +2,7 @@ WORKER_REPLICAS ?=2
 SECRET ?= secret
 
 init:
-	docker swarm init
+	docker swarm init || true
 
 _setup: init
 

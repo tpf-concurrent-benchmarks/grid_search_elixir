@@ -29,7 +29,7 @@ The objective of this project is to benchmark the language on a real-world distr
 
 #### Run
 
-- `make deploy` deploys the manager and worker services locally, alongside with Graphite, Grafana and cAdvisor.
+- `make clean_local_deploy` deploys the manager and worker services locally, alongside with Graphite, Grafana and cAdvisor.
 - `make manager_run_gs` executes the grid search on the manager service.
 - `make remove` removes all services created by the `deploy` command.
 
