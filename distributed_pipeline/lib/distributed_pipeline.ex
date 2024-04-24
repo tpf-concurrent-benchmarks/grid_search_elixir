@@ -47,7 +47,7 @@ defmodule DistributedPipeline do
 
   # DistributedPipeline.distributed_gs
   def distributed_gs do
-    config = ConfigReader.get_config("../resources/data.json", :manager)
+    config = ConfigReader.get_config("/app/lib/resources/data.json", :manager)
     IO.puts("Config read: #{inspect(config)}")
     data = Enum.at(config["data"], 0)
     data2 = Enum.at(config["data"], 1)
@@ -56,8 +56,8 @@ defmodule DistributedPipeline do
     interval2 = Interval.newInterval(Enum.at(data2, 0), Enum.at(data2, 1), Enum.at(data2, 2))
     interval3 = Interval.newInterval(Enum.at(data3, 0), Enum.at(data3, 1), Enum.at(data3, 2))
 
-    partition = Partition.newPartition([interval, interval2, interval3], 3, 10_800_000)
-    {:ok, source} = WorkSource.start_link(partition, "MIN")
+    partition = Partition.newPartition([interval, interval2, interval3], 3, config["maxItemsPerBatch"])
+    {:ok, source} = WorkSource.start_link(partition, config["agg"])
     IO.puts("Source pid: #{inspect(source)}")
     {:ok, sink} = WorkSink.start_link()
     IO.puts("Sink pid: #{inspect(sink)}")
