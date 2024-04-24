@@ -1,4 +1,3 @@
-N_WORKERS=2
 WORKER_REPLICAS ?=2
 SECRET ?= secret
 
@@ -6,9 +5,6 @@ init:
 	docker swarm init
 
 _setup: init
-
-remove:
-	docker stack rm gs_elixir
 
 down_graphite:
 	if docker stack ls | grep -q graphite; then \
@@ -26,20 +22,19 @@ _script_permisions:
 
 _common_folders:
 	mkdir -p configs/graphite
-	mkdir -p configs/grafana_config
 .PHONY: _common_folders
 
 setup: _script_permisions _common_folders
 
-deploy_local:
-	WORKER_REPLICAS=$(WORKER_REPLICAS) \
+deploy:
+	until WORKER_REPLICAS=$(WORKER_REPLICAS) \
 	SECRET=$(SECRET) \
 	docker stack deploy \
 	-c docker/monitor.yml \
 	-c docker/service.yml \
-	gs_elixir
+	gs_elixir; do sleep 1; done
 
-remove_local:
+remove:
 	docker stack rm gs_elixir
 
 remove_local_containers:
@@ -47,13 +42,13 @@ remove_local_containers:
 
 clean_local_deploy: setup
 	make remove_local_containers
-	make deploy_local
-	@echo "Waiting for services to start..."
+	make deploy
+	until @echo "Waiting for services to start..."
 	@while [ $$(docker service ls --filter name=gs_elixir --format "{{.Replicas}}" | grep -v "0/0" | awk -F/ '{if ($$1!=$$2) print $$0}' | wc -l) -gt 0 ]; do sleep 1; done
 	@echo "Waiting for setup to complete..."
 		@for container in $$(docker ps -qf "name=gs_elixir" -f "status=running"); do \
 			if echo $$container | grep -q -e "worker" -e "manager"; then \
-				container_name=$$(docker inspect --format '{{.Name}}' $$container); \
+				container_name=$$(docker inspect --format '{{.Name}}' $$container); \; 
 				echo "> Waiting for setup to complete for $$container $$container_name"; \
 				while docker inspect --format '{{.State.Running}}' $$container | grep -q "true" && ! docker logs $$container 2>&1 | grep -q "Setup complete"; do \
 					sleep 1; \
@@ -69,9 +64,6 @@ iex:
 run:
 	make clean_local_deploy
 	make manager_run_gs
-
-full_remove_local:
-	docker stack rm gs_elixir
 
 worker_iex:
 	@if [ -z "$(num)" ]; then \
